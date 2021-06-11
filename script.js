@@ -3,10 +3,15 @@ const pixelBoard = document.getElementById('pixel-board');
 const pixels = document.getElementsByClassName('pixel');
 const colors = document.getElementsByClassName('color');
 const input = document.getElementById('board-size');
+const previewBox = document.getElementById('preview');
+const canvasBox = document.getElementById('canvas');
 
 /* Buttons */
 const clearBtn = document.getElementById('clear-board');
 const genNuBtn = document.getElementById('generate-board');
+const shuffleBtn = document.getElementById('shuffle');
+const saveBtn = document.getElementById('save-board');
+const closeBtn = document.getElementById('close');
 
 /* Functions */
 
@@ -23,6 +28,9 @@ function genPalette() {
     colors[i].style.backgroundColor = randomPalette();
   }
 }
+
+//Shuffle Palette Event
+shuffleBtn.addEventListener('click', genPalette);
 
 // Function
 function selectColor(evt) {
@@ -64,19 +72,13 @@ clearBtn.addEventListener('click', clearBoard);
 
 // This function generates a board based on the size (line x pixel)
 function genBoard(size) {
-  pixelBoard.style.height = `${40 * size}px`;
-  pixelBoard.style.width = `${(40 * size) + (2 * size)}px`;
-
   for (let i = 0; i < size; i += 1) {
-    const pixelLine = document.createElement('div');
-    pixelLine.style.width = `${parseInt(size, 10) * 42}px`;
-    pixelLine.className = 'line';
-    pixelBoard.appendChild(pixelLine);
-
+    let newRow = document.createElement('tr');
+    pixelBoard.appendChild(newRow);
     for (let j = 0; j < size; j += 1) {
-      const pixelCell = document.createElement('div');
-      pixelCell.className = 'pixel';
-      pixelLine.appendChild(pixelCell);
+      let newPixel = document.createElement('td')
+      newPixel.className = 'pixel';
+      newRow.appendChild(newPixel);
     }
   }
   fillEvent();
@@ -105,6 +107,21 @@ function genNuBoard() {
   genBoard(size);
 }
 genNuBtn.addEventListener('click', genNuBoard);
+
+// This function displays a box containing a downloadable image
+function saveImage() {
+  previewBox.style.visibility = 'visible';
+  canvasBox.innerHTML = '';
+  html2canvas(pixelBoard).then(canvas => {
+    canvasBox.appendChild(canvas)
+  });
+}
+saveBtn.addEventListener('click', saveImage);
+
+function close() {
+  previewBox.style.visibility = 'hidden';
+}
+closeBtn.addEventListener('click', close);
 
 // Onload
 window.onload = function onload() {
